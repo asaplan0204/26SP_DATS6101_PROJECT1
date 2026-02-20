@@ -1,0 +1,193 @@
+---
+title: "Project 1"
+author: "Aspen Saplan"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: show
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+
+```{r init, include=F}
+library(ezids)
+```
+
+# Set up of dataset walmart:
+```{r, echo=TRUE}
+#getwd()
+walmart = read.csv("Walmart.csv")
+walmart$category = as.factor(walmart$category)
+walmart$store_location = as.factor(walmart$store_location)
+walmart$customer_loyalty_level = as.factor(walmart$customer_loyalty_level)
+walmart$payment_method = as.factor(walmart$payment_method)
+print(str(walmart))
+```
+
+# Summaries of variables:
+### The summary of category:
+```{r,echo=TRUE}
+summary(walmart$category)
+```
+
+### The summary of store_location:
+```{r,echo=TRUE}
+summary(walmart$store_location)
+```
+
+### The summary of customer_income:
+```{r,echo=TRUE}
+summary(walmart$customer_income)
+```
+
+### The summary of customer_loyalty_level:
+```{r,echo=TRUE}
+summary(walmart$customer_loyalty_level)
+```
+
+### The summary of payment_method:
+```{r,echo=TRUE}
+summary(walmart$payment_method)
+```
+
+# Checking if NA values exist:
+
+### Category
+Sum of category NA values: `r sum(is.na(walmart$category))`
+
+### store_location
+Sum of store_location NA values: `r sum(is.na(walmart$store_location))`
+
+### customer_income
+Sum of customer_income NA values: `r sum(is.na(walmart$customer_income))`
+
+### customer_loyalty_level
+Sum of customer_loyalty_level NA values: `r sum(is.na(walmart$customer_loyalty_level))`
+
+### payment_method
+Sum of payment_method NA values: `r sum(is.na(walmart$payment_method))`
+
+# EDA of category and store_location:
+```{r,echo=TRUE}
+library(ggplot2)
+ggplot(walmart, aes(x = store_location, fill = category)) +
+  geom_bar(position = "dodge", color = "black")+
+  scale_fill_manual(values = c(
+    "Appliances" = "purple",
+    "Electronics" = "red"
+  ))+
+  labs(title = "Number of Transactions by Store Location and Category",
+    x = "Store Location",
+    y = "Number of Transactions",
+    fill = "Category")
+```
+
+# EDA of category and customer_income:
+```{r,echo=TRUE}
+ggplot(walmart, aes(x = category, y=customer_income)) + 
+  geom_boxplot() + 
+  geom_boxplot( color="black", fill="gold", outlier.colour="blue", outlier.shape=19, outlier.size=2) +
+  labs(title="Box plot of Customer Income in Walmart using `ggplot`", x="", y = "Customer Income(Dollar Amount)")
+```
+
+The data looks pretty similar across both appliances and electronics.
+
+```{r, echo=TRUE}
+library(ggplot2)
+ggplot(data=walmart, aes(customer_income)) + 
+  geom_histogram(breaks=seq(20005.34, 119999.8, by = 2000),
+                 col="black", 
+                 fill="gold", 
+                 alpha = .8) + # opacity
+  labs(x="Customer Income(Dollar Amount)", y="Frequency") +
+  labs(title="Histogram of Customer Income for Walmart Dataset using `ggplot`")
+```
+
+```{r, echo=TRUE}
+qqnorm(walmart$customer_income, main="Q-Q plot of Customer Income in Walmart") 
+qqline(walmart$customer_income)
+```
+
+The distribution for the customer_income as a whole is approximately uniform with no strong skewing.
+
+## Subset of appliances:
+```{r, echo=TRUE}
+appliances = subset(walmart, category == "Appliances")
+print(head(appliances[, c("category", "customer_income")], n=5))
+```
+```{r, echo=TRUE}
+library(ggplot2)
+ggplot(data=appliances, aes(customer_income)) + 
+  geom_histogram(breaks=seq(20005.34, 119999.8, by = 2000),
+                 col="black", 
+                 fill="red", 
+                 alpha = .8) + # opacity
+  labs(x="Customer Income(Dollar Amount)", y="Frequency") +
+  labs(title="Histogram of Customer Income for Appliance Dataset using `ggplot`")
+```
+
+```{r, echo=TRUE}
+qqnorm(appliances$customer_income, main="Q-Q plot of Customer Income in Appliances") 
+qqline(appliances$customer_income)
+```
+
+The distribution for the customer_income for appliances is approximately uniform with no strong skewing.
+
+## Subset of electronics:
+```{r, echo=TRUE}
+electronics = subset(walmart, category == "Electronics")
+print(head(electronics[, c("category", "customer_income")], n=5))
+```
+
+```{r, echo=TRUE}
+library(ggplot2)
+ggplot(data=electronics, aes(customer_income)) + 
+  geom_histogram(breaks=seq(20028.81, 119997.5, by = 2000),
+                 col="black", 
+                 fill="green", 
+                 alpha = .8) + # opacity
+  labs(x="Customer Income(Dollar Amount)", y="Frequency") +
+  labs(title="Histogram of Customer Income for Electronics Dataset using `ggplot`")
+```
+
+```{r, echo=TRUE}
+qqnorm(electronics$customer_income, main="Q-Q plot of Customer Income in Electronics") 
+qqline(electronics$customer_income)
+```
+
+The distribution for the customer_income for electronics is approximately uniform with no strong skewing.
+
+# EDA of category and customer_loyalty_level:
+```{r,echo=TRUE}
+library(ggplot2)
+ggplot(walmart, aes(x = customer_loyalty_level, fill = category)) +
+  geom_bar(position = "dodge", color = "black")+
+  scale_fill_manual(values = c(
+    "Appliances" = "purple",
+    "Electronics" = "red"
+  ))+
+  labs(title = "Number of Transactions by Customer Loyalty Level and Category",
+    x = "Customer Loyalty Level",
+    y = "Number of Transactions",
+    fill = "Category")
+```
+
+# EDA of category and payment_method:
+```{r,echo=TRUE}
+library(ggplot2)
+ggplot(walmart, aes(x = payment_method, fill = category)) +
+  geom_bar(position = "dodge", color = "black")+
+  scale_fill_manual(values = c(
+    "Appliances" = "purple",
+    "Electronics" = "red"
+  ))+
+  labs(title = "Number of Transactions by Payment Method and Category",
+    x = "Payment Method",
+    y = "Number of Transactions",
+    fill = "Category")
+```
