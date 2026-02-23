@@ -191,3 +191,76 @@ ggplot(walmart, aes(x = payment_method, fill = category)) +
     y = "Number of Transactions",
     fill = "Category")
 ```
+
+# Chi Square Test of store_location and category
+```{r,echo=TRUE}
+contableSL = table(walmart$category, walmart$store_location)
+xkabledply(contableSL, title="Contingency table for category and store_location within walmart dataset")
+```
+
+## Test of Independence on category and store_location on contable
+
+Null Hypothesis: Category and store_location are independent
+
+Alternative Hypothesis: Category and store_location are not independent
+
+Alpha = 0.05
+
+```{r, echo=TRUE}
+chitestSL = chisq.test(contableSL)
+chitestSL
+```
+Conclusion: Since the p-value(0.1489722) is greater than the alpha(0.05) we can conclude that we cannot reject the null hypothesis.  Which provides evidence suggesting that store_location and category are independent.
+
+# T-Test of customer_income and category
+Customer_income Null Hypothesis: means are equal for appliances and electronics
+
+Customer_income Alternative Hypothesis: means are not equal for appliances and electronics
+
+Alpha = 0.05
+
+```{r,echo=TRUE}
+ttestCI = t.test(appliances$customer_income, electronics$customer_income)
+ttestCI
+```
+
+Conclusion: Since the p-value(0.1725206) is less than the alpha(0.05) we can conclude by failing to reject the null hypothesis.  Which provides evidence suggesting that the mean value of customer_income for appliances is equal to electronics
+
+# Chi Square Test of customer_loyalty_level and category
+```{r,echo=TRUE}
+contableCLL = table(walmart$category, walmart$customer_loyalty_level)
+xkabledply(contableCLL, title="Contingency table for category and customer_loyalty_level within walmart dataset")
+```
+
+## Test of Independence on category and customer_loyalty_level on contable
+
+Null Hypothesis: Category and customer_loyalty_level are independent
+
+Alternative Hypothesis: Category and customer_loyalty_level are not independent
+
+Alpha = 0.05
+
+```{r, echo=TRUE}
+chitestCLL = chisq.test(contableCLL)
+chitestCLL
+```
+
+Conclusion: Since the p-value(0.3872087) is greater than the alpha(0.05) we can conclude that we cannot reject the null hypothesis.  Which provides evidence suggesting that customer_loyalty_level and category are independent.
+
+# Chi Square Test of payment_method and category
+```{r,echo=TRUE}
+contablePM = table(walmart$category, walmart$payment_method)
+xkabledply(contablePM, title="Contingency table for category and payment_method within walmart dataset")
+```
+## Test of Independence on category and payment_method on contable
+
+Null Hypothesis: Category and payment_method are independent
+
+Alternative Hypothesis: Category and payment_method are not independent
+
+Alpha = 0.05
+```{r, echo=TRUE}
+chitestPM = chisq.test(contablePM)
+chitestPM
+```
+Conclusion: Since the p-value(0.8444539) is greater than the alpha(0.05) we can conclude that we cannot reject the null hypothesis.  Which provides evidence suggesting that payment_method and category are independent.
