@@ -1,0 +1,170 @@
+---
+title: "Project 1"
+author: "Aspen Saplan"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    code_folding: hide
+    number_sections: false
+    toc: yes
+    toc_depth: 3
+    toc_float: yes
+  pdf_document:
+    toc: yes
+    toc_depth: '3'
+---
+# Intro
+```{r init, include=F}
+library(ezids)
+```
+
+## - Set up of dataset walmart:
+```{r, echo=TRUE}
+#getwd()
+walmart = read.csv("Walmart.csv")
+walmart$category = as.factor(walmart$category)
+walmart$store_location = as.factor(walmart$store_location)
+walmart$customer_loyalty_level = as.factor(walmart$customer_loyalty_level)
+walmart$payment_method = as.factor(walmart$payment_method)
+print(str(walmart))
+```
+
+# 1. Store Location, Customer Loyalty Level, Payment Method, and Customer Income On Category:
+
+The variables that will be focussed on in this section will be store location, customer loyalty level, payment method, and  customer income when comparing to the category variable. 
+
+The three qualitative or factor variables in this section are store location, customer loyalty level, and payment method. Store location is made up of four total locations being Chicago, IL: Dallas, TX; Los Angeles, CA; Miami, FL; New York, NY. Customer loyalty level consists of four total levels being platinum, gold, silver and bronze.  Payment method consists of four total payment options being cast, credit card, debit card, and digital wallet.
+
+#### - Summary statistics of store location:
+
+```{r,echo=TRUE}
+summary(walmart$store_location)
+```
+
+#### - Summary statistics of customer loyalty level:
+
+```{r,echo=TRUE}
+summary(walmart$customer_loyalty_level)
+```
+
+#### - Summary statistics of payment method:
+
+```{r,echo=TRUE}
+summary(walmart$payment_method)
+```
+
+## EDA:
+
+For the following factor variables I used a grouped bar chart with the number of transactions as the Y axis and the variable as the X axis.  I then filled them by which category they were, either appliances or electronics.  
+
+```{r,echo=TRUE}
+library(ggplot2)
+ggplot(walmart, aes(x = store_location, fill = category)) +
+  geom_bar(position = "dodge", color = "black")+
+  scale_fill_manual(values = c(
+    "Appliances" = "purple",
+    "Electronics" = "red"
+  ))+
+  labs(title = "Number of Transactions by Store Location and Filled with Category",
+    x = "Store Location",
+    y = "Number of Transactions",
+    fill = "Category")
+```
+
+```{r,echo=TRUE}
+library(ggplot2)
+ggplot(walmart, aes(x = customer_loyalty_level, fill = category)) +
+  geom_bar(position = "dodge", color = "black")+
+  scale_fill_manual(values = c(
+    "Appliances" = "purple",
+    "Electronics" = "red"
+  ))+
+  labs(title = "Number of Transactions by Customer Loyalty Level and Filled with Category",
+    x = "Customer Loyalty Level",
+    y = "Number of Transactions",
+    fill = "Category")
+```
+
+```{r,echo=TRUE}
+library(ggplot2)
+ggplot(walmart, aes(x = payment_method, fill = category)) +
+  geom_bar(position = "dodge", color = "black")+
+  scale_fill_manual(values = c(
+    "Appliances" = "purple",
+    "Electronics" = "red"
+  ))+
+  labs(title = "Number of Transactions by Payment Method and Filled with Category",
+    x = "Payment Method",
+    y = "Number of Transactions",
+    fill = "Category")
+```
+
+Looking at the different grouped bar charts that consist of store location, customer loyalty level, and payment method comparing them to the number of transactions filled by the category variable.  The electronics transactions have a tendency to exceed the appliance transactions for the most part.  There are a few cases such as New York, NY having appliance transactions exceed electronics transactions or the silver customer loyalty level having the same amount of electronic transactions as appliance transactions.  So, there is a pattern of electronics out weighing appliances for when looking at store location, customer loyalty level, and payment method.
+
+The last variable to be explored in this section is customer income.  This variable is numerical so no need to factor it as R will treat this variable correctly. However, I will split appliances and electronics transactions into subset in order to see the distribution for each category by customer income.
+
+#### - Summary of customer income:
+
+```{r,echo=TRUE}
+summary(walmart$store_location)
+```
+
+```{r,echo=TRUE}
+ggplot(walmart, aes(x = category, y=customer_income)) + 
+  geom_boxplot() + 
+  geom_boxplot( color="black", fill="gold", outlier.colour="blue", outlier.shape=19, outlier.size=2) +
+  labs(title="Box plot of Customer Income in Walmart using `ggplot`", x="", y = "Customer Income(Dollar Amount)")
+```
+
+#### - Subset of appliances:
+
+```{r, echo=TRUE}
+appliances = subset(walmart, category == "Appliances")
+print(head(appliances[, c("category", "customer_income")], n=5))
+```
+
+#### - Summary of appliances customer income:
+
+```{r,echo=TRUE}
+summary(appliances$customer_income)
+```
+
+```{r, echo=TRUE}
+library(ggplot2)
+ggplot(data=appliances, aes(customer_income)) + 
+  geom_histogram(breaks=seq(20005.34, 119999.8, by = 2000),
+                 col="black", 
+                 fill="red", 
+                 alpha = .8) + # opacity
+  labs(x="Customer Income(Dollar Amount)", y="Frequency") +
+  labs(title="Histogram of Customer Income for Appliance Dataset using `ggplot`")
+```
+
+#### - Subset of electronics:
+```{r, echo=TRUE}
+electronics = subset(walmart, category == "Electronics")
+print(head(electronics[, c("category", "customer_income")], n=5))
+```
+
+#### - Summary of electronics customer income:
+
+```{r,echo=TRUE}
+summary(electronics$customer_income)
+```
+
+```{r, echo=TRUE}
+library(ggplot2)
+ggplot(data=electronics, aes(customer_income)) + 
+  geom_histogram(breaks=seq(20028.81, 119997.5, by = 2000),
+                 col="black", 
+                 fill="green", 
+                 alpha = .8) + # opacity
+  labs(x="Customer Income(Dollar Amount)", y="Frequency") +
+  labs(title="Histogram of Customer Income for Electronics Dataset using `ggplot`")
+```
+
+Looking at both electronics customer income and appliances customer income using a histogram, it suggests that both electronics and appliances have a pretty uniform distribution.  Looking at a boxplot of the two categories shows that they have pretty similar descriptive statistics.  Thus, through the descriptive statistics there is not a huge pattern or trend regarding customer income and category.  The distributions are very similar to each other with no skewing at any value.  While the descriptive statistics such as mean, median, and inter quartile ranges are also similar to each other indicating customer income may not have a huge impact on which category is purchased.
+
+## Sketched answer:
+
+Through different hypothesis testing on our variables of store location, customer loyalty level, payment method, and customer income.  The data suggests that all of our variables are independent or share the same population mean when compared across the variable category.
