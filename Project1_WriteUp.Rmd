@@ -106,7 +106,7 @@ The last variable to be explored in this section is customer income.  This varia
 #### - Summary of customer income:
 
 ```{r,echo=TRUE}
-summary(walmart$store_location)
+summary(walmart$customer_income)
 ```
 
 ```{r,echo=TRUE}

@@ -1707,9 +1707,9 @@ transactions into subset in order to see the distribution for each
 category by customer income.</p>
 <div id="summary-of-customer-income" class="section level4">
 <h4>- Summary of customer income:</h4>
-<pre class="r"><code>summary(walmart$store_location)</code></pre>
-<pre><code>##     Chicago, IL      Dallas, TX Los Angeles, CA       Miami, FL    New York, NY 
-##            1013             998            1038             964             987</code></pre>
+<pre class="r"><code>summary(walmart$customer_income)</code></pre>
+<pre><code>##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   20005   44865   70188   70042   95396  120000</code></pre>
 <pre class="r"><code>ggplot(walmart, aes(x = category, y=customer_income)) + 
   geom_boxplot() + 
   geom_boxplot( color=&quot;black&quot;, fill=&quot;gold&quot;, outlier.colour=&quot;blue&quot;, outlier.shape=19, outlier.size=2) +
