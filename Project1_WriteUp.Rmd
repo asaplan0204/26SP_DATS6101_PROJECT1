@@ -168,3 +168,87 @@ Looking at both electronics customer income and appliances customer income using
 ## Sketched answer:
 
 Through different hypothesis testing on our variables of store location, customer loyalty level, payment method, and customer income.  The data suggests that all of our variables are independent or share the same population mean when compared across the variable category.
+
+## Hypothesis Testing:
+
+A chi-squared test must be used for the store location, customer loyalty level, and payment method variable when testing for independence with the category variable.  A chi-squared test must be used due to store location, customer loyalty, and payment method being categorical variables and the category variable being categorical variable as well.  First a contingency table has to be made for store location and category, customer loyalty level and category, and payment method and category.
+
+```{r,echo=TRUE}
+contableSL = table(walmart$category, walmart$store_location)
+xkabledply(contableSL, title="Contingency table for category and store_location within walmart dataset")
+```
+
+```{r,echo=TRUE}
+contableCLL = table(walmart$category, walmart$customer_loyalty_level)
+xkabledply(contableCLL, title="Contingency table for category and customer_loyalty_level within walmart dataset")
+```
+
+```{r,echo=TRUE}
+contablePM = table(walmart$category, walmart$payment_method)
+xkabledply(contablePM, title="Contingency table for category and payment_method within walmart dataset")
+```
+
+#### - Test of Independence on category and store_location using contableSL:
+
+Null Hypothesis: Category and store_location are independent
+
+Alternative Hypothesis: Category and store_location are not independent
+
+Alpha = 0.05
+
+```{r, echo=TRUE}
+chitestSL = chisq.test(contableSL)
+chitestSL
+```
+
+After running our chi-squared test on store location and category we can see that our p-value returned is 0.149.  Comparing our p-value(0.149) and our alpha value(0.05) we can see that the p-value is greater than alpha.  Thus, since our p-value is greater than our alpha value we fail to reject the null hypothesis, which provides evidence suggesting that store location and category are independent and have no association. 
+
+#### - Test of Independence on category and customer_loyalty_level using contableCLL:
+
+Null Hypothesis: Category and customer_loyalty_level are independent
+
+Alternative Hypothesis: Category and customer_loyalty_level are not independent
+
+Alpha = 0.05
+
+```{r, echo=TRUE}
+chitestCLL = chisq.test(contableCLL)
+chitestCLL
+```
+
+After running our chi-squared test on customer loyalty level and category we can see that our p-value returned is 0.3872.  Comparing our p-value(0.3872) and our alpha value(0.05) we can see that the p-value is greater than alpha.  Thus, since our p-value is greater than our alpha value we fail to reject the null hypothesis, which provides evidence suggesting that customer loyalty level and category are independent and have no association. 
+
+#### - Test of Independence on category and payment_method using contablePM:
+
+Null Hypothesis: Category and payment_method are independent
+
+Alternative Hypothesis: Category and payment_method are not independent
+
+Alpha = 0.05
+```{r, echo=TRUE}
+chitestPM = chisq.test(contablePM)
+chitestPM
+```
+
+After running our chi-squared test on payment method and category we can see that our p-value returned is 0.8445.  Comparing our p-value(0.8445) and our alpha value(0.05) we can see that the p-value is greater than alpha.  Thus, since our p-value is greater than our alpha value we fail to reject the null hypothesis, which provides evidence suggesting that payment method and category are independent and have no association.
+
+For the customer income variable I started by separating appliance transactions and electronics transactions into two subsets.  Knowing that customer income is a numerical variable I know that a two sample t-test is needed for this hypothesis test.
+
+#### - T-Test of customer_income and category:
+
+Customer_income Null Hypothesis: means are equal for appliances and electronics
+
+Customer_income Alternative Hypothesis: means are not equal for appliances and electronics
+
+Alpha = 0.05
+
+```{r,echo=TRUE}
+ttestCI = t.test(appliances$customer_income, electronics$customer_income)
+ttestCI
+```
+
+After running the t-test on appliances customer income and electronics customer income we can see that our p-value returned is 0.1725.  Comparing our p-value(0.1725) and our alpha value(0.05) we can see that the p-value is greater than alpha.  Thus, since our p-value is greater than our alpha we fail to reject the null hypothesis.  So, the evidence does not suggest that a higher or lower income is associated with purchasing electronics over appliances and vice versa.
+
+## Outcome:
+
+Through different hypothesis testing on these variables of store location, customer loyalty level, payment method, and customer income.  The data suggests that all of our variables are independent or share the same population mean when compared across the variable category.
