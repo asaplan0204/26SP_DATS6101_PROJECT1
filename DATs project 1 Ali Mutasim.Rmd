@@ -49,32 +49,39 @@ summary(w)
 
 ```{r}
 #EDA of total revenue for appliances and electronics
+library(ggplot2)
+
 total_rev = aggregate(revenue ~ category, data = walmart, FUN = sum)
 
-barplot(total_rev$revenue,
-        names.arg = total_rev$category,
-        col = c("purple", "red"),
-        main = "Total Revenue by Category",
-        ylab = "Total Revenue")
 
-boxplot(revenue ~ category,
-        data = walmart,
-        col = c("purple", "red"),
-        main = "Revenue per Transaction by Category",
-        ylab = "Revenue per Transaction",
-        xlab = "Category")
+library(ggplot2)
 
-boxplot(quantity_sold ~ category,
-        data = walmart,
-        col = c("purple", "red"),
-        main = "Quantity Sold by Category",
-        ylab = "Quantity Sold")
+ggplot(walmart, aes(x = category, y = unit_price, fill = category)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("Appliances" = "purple",
+                               "Electronics" = "red")) +
+  labs(title = "Unit Price by Category",
+       x = "Category",
+       y = "Unit Price") +
+  theme_minimal()
 
-boxplot(customer_age ~ category,
-        data = walmart,
-        col = c("purple", "red"),
-        main = "Customer Age by Category",
-        ylab = "Customer Age")
+ggplot(walmart, aes(x = category, y = quantity_sold, fill = category)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("Appliances" = "purple",
+                               "Electronics" = "red")) +
+  labs(title = "Quantity Sold by Category",
+       x = "Category",
+       y = "Quantity Sold") +
+  theme_minimal()
+
+ggplot(walmart, aes(x = category, y = customer_age, fill = category)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("Appliances" = "purple",
+                               "Electronics" = "red")) +
+  labs(title = "Customer Age by Category",
+       x = "Category",
+       y = "Customer Age") +
+  theme_minimal()
 
 ggplot(walmart, aes(x = category, fill = customer_gender)) +
   geom_bar(position = "dodge") +
@@ -83,7 +90,7 @@ ggplot(walmart, aes(x = category, fill = customer_gender)) +
        y = "Number of Transactions",
        fill = "Gender")
 ```
-
+The data looks very similar across all of the plots.
 
 ```{r}
 t.test(revenue ~ category, data = walmart)
@@ -94,11 +101,19 @@ t.test(customer_age ~ category, data = walmart)
 
 ```
 
+
+the t-tests were used to show any sigificant differences in unit_price,quantity sold, customer age, and revenue within the the two categories and they all seem to fail to reject the null hypothesis. There isn't a difference in three of the tests. However customer age and category accept the alternate hypothesis. 
+
+
 ```{r}
 
 contable_gender = table(walmart$category, walmart$customer_gender)
 chisq.test(contable_gender)
 
 ```
+
+Similarily, the chi-square test didn't show a disparity between genders as sales seem to be the same among genders.
+
+
 ```
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
