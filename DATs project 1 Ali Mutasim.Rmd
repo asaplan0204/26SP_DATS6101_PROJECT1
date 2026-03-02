@@ -21,7 +21,7 @@ customer_age = as.factor(w$customer_age)
 customer_gender = as.factor(w$customer_gender)
 unit_price = as.factor(w$unit_price)
 quantity_sold = as.factor(w$quantity_sold)
-revenue <- w$quantity_sold * w$unit_price
+
 
 ```
 
@@ -117,4 +117,5 @@ Similarily, the chi-square test didn't show a disparity between genders as sales
 
 ```
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
 
