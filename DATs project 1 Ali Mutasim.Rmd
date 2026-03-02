@@ -83,7 +83,7 @@ ggplot(walmart, aes(x = category, fill = customer_gender)) +
        y = "Number of Transactions",
        fill = "Gender")
 ```
-
+The data looks very similar across all of the plots. 
 
 ```{r}
 t.test(revenue ~ category, data = walmart)
@@ -94,11 +94,18 @@ t.test(customer_age ~ category, data = walmart)
 
 ```
 
+the t-tests were used to show any sigificant differences in unit_price,quantity sold, customer age, and revenue within the the two categories and they all seem to fail to reject the null hypothesis. There isn't a difference in all four tests.
+
+
 ```{r}
 
 contable_gender = table(walmart$category, walmart$customer_gender)
 chisq.test(contable_gender)
 
 ```
+
+similarily, the chi-square test didn't show a disparity between genders as sales seem to be the same among genders.
+
 ```
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
