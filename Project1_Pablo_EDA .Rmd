@@ -23,6 +23,18 @@ library(effsize)
 walmart <- read_csv("Walmart.csv") |> clean_names()
 glimpse(walmart)
 ```
+```{r, echo=TRUE}
+walmart <- read_csv("Walmart.csv") |> clean_names() 
+```
+
+```{r, echo=TRUE}
+walmart <- walmart %>%
+  mutate(
+    transaction_date = lubridate::mdy_hm(transaction_date),
+    transaction_day  = as.Date(transaction_date)
+  )
+```
+
 
 ```{r, echo=TRUE}
 walmart$revenue <- walmart$quantity_sold * walmart$unit_price
@@ -87,3 +99,94 @@ t.test(quantity_sold ~ category, data = walmart)
 library(effsize)
 cohen.d(revenue ~ category, data = walmart)
 ```
+
+
+
+
+
+```{r, echo=TRUE}
+class(walmart$transaction_date)
+summary(walmart$transaction_date)
+```  
+
+```{r, echo=TRUE}
+walmart <- walmart %>%
+  filter(transaction_day >= as.Date("2023-12-31"),
+         transaction_day <= as.Date("2024-09-16"))
+``` 
+
+```{r, echo=TRUE}
+walmart_month <- walmart %>%
+  mutate(month = floor_date(transaction_date, "month")) %>%
+  group_by(month, category) %>%
+  summarise(
+    total_revenue = sum(revenue),
+    mean_revenue = mean(revenue),
+    mean_quantity = mean(quantity_sold),
+    n_transactions = n(),
+    .groups = "drop"
+  )
+
+walmart_month
+``` 
+
+
+
+```{r, echo=TRUE}
+walmart %>%
+  mutate(month = floor_date(transaction_date, "month")) %>%
+  count(month, category) %>%
+  arrange(month)
+``` 
+
+```{r, echo=TRUE}
+walmart_full_months <- walmart %>%
+  filter(transaction_date < as.POSIXct("2024-09-01"))
+``` 
+
+```{r, echo=TRUE}
+walmart_month_full <- walmart_full_months %>%
+  mutate(month = floor_date(transaction_date, "month")) %>%
+  group_by(month, category) %>%
+  summarise(
+    total_revenue = sum(revenue),
+    mean_revenue = mean(revenue),
+    mean_quantity = mean(quantity_sold),
+    n_transactions = n(),
+    .groups = "drop"
+  )
+``` 
+
+```{r, echo=TRUE}
+ggplot(walmart_month_full, aes(x = month, y = total_revenue, color = category)) +
+  geom_line(linewidth = 1) +
+  scale_y_continuous(labels = scales::label_number(scale = 1e-6, suffix = "M", prefix = "$")) +
+  labs(title = "Monthly Total Revenue by Category (Full Months Only)",
+       x = "Month",
+       y = "Revenue ($ Millions)")
+``` 
+
+```{r, echo=TRUE}
+last_month <- max(walmart_month_full$month)
+last_month
+``` 
+
+
+
+```{r, echo=TRUE}
+walmart_month_clean <- walmart_month_full %>%
+  filter(month < as.Date("2024-09-01"))
+``` 
+
+```{r, echo=TRUE}
+ggplot(walmart_month_clean, aes(x = month, y = total_revenue, color = category)) +
+  geom_line(linewidth = 1) +
+  geom_point(size = 2) +
+  scale_y_continuous(
+    labels = scales::label_number(scale = 1e-6, suffix = "M", prefix = "$")
+  ) +
+  labs(title = "Monthly Total Revenue by Category (January???August 2024)",
+       x = "Month",
+       y = "Revenue ($ Millions)") +
+  theme_minimal()
+``` 
