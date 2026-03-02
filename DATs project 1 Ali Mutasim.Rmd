@@ -1,0 +1,104 @@
+---
+title: "EDA_Ali mutasim"
+output: html_document
+date: "2026-02-28"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r walmart dataset setup}
+walmart = read.csv("C:/Users/alimu/Downloads/Walmart.csv")
+w <- walmart[, c("transaction_id", "category", "quantity_sold", "unit_price")]
+customer_age = as.factor(w$customer_age)
+customer_gender = as.factor(w$customer_gender)
+unit_price = as.factor(w$unit_price)
+quantity_sold = as.factor(w$quantity_sold)
+revenue <- w$quantity_sold * w$unit_price
+
+```
+
+
+
+#checking if NA values exist in the variables
+
+```{r}
+colSums(is.na(walmart))
+```
+
+
+
+
+## Summary statistics
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+summary(w)
+```
+
+#EDA 
+
+
+```{r}
+#EDA of total revenue for appliances and electronics
+total_rev = aggregate(revenue ~ category, data = walmart, FUN = sum)
+
+barplot(total_rev$revenue,
+        names.arg = total_rev$category,
+        col = c("purple", "red"),
+        main = "Total Revenue by Category",
+        ylab = "Total Revenue")
+
+boxplot(revenue ~ category,
+        data = walmart,
+        col = c("purple", "red"),
+        main = "Revenue per Transaction by Category",
+        ylab = "Revenue per Transaction",
+        xlab = "Category")
+
+boxplot(quantity_sold ~ category,
+        data = walmart,
+        col = c("purple", "red"),
+        main = "Quantity Sold by Category",
+        ylab = "Quantity Sold")
+
+boxplot(customer_age ~ category,
+        data = walmart,
+        col = c("purple", "red"),
+        main = "Customer Age by Category",
+        ylab = "Customer Age")
+
+ggplot(walmart, aes(x = category, fill = customer_gender)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Gender Distribution by Category",
+       x = "Category",
+       y = "Number of Transactions",
+       fill = "Gender")
+```
+
+
+```{r}
+t.test(revenue ~ category, data = walmart)
+
+t.test(quantity_sold ~ category, data = walmart)
+
+t.test(customer_age ~ category, data = walmart)
+
+```
+
+```{r}
+
+contable_gender = table(walmart$category, walmart$customer_gender)
+chisq.test(contable_gender)
+
+```
+```
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
