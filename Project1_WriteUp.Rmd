@@ -1,6 +1,6 @@
 ---
 title: "Project 1"
-author: "Aspen Saplan"
+author: "Aspen Saplan et al."
 date: "`r Sys.Date()`"
 output:
   html_document:
@@ -13,7 +13,7 @@ output:
     toc: yes
     toc_depth: '3'
 ---
-# Walmart
+# Walmart: What Drives Customer Purchases?
 ```{r init, include=F}
 library(ezids)
 ```
@@ -266,3 +266,113 @@ After running the t-test on appliances customer income and electronics customer 
 ## Outcome:
 
 Through different hypothesis testing on these variables of store location, customer loyalty level, payment method, and customer income.  The data suggests that all of our variables are independent or share the same population mean when compared across the variable category.
+
+# 2. Day of the week, holidays, and type of weather considered against total sales and sales by category
+
+## Author of this section: Alex Rizzo-Banks
+
+
+Each of the following variables will be compared against the variable "category" to tell us if the given variables influence preference toward appliances or electronics or if they show a dependence between number of transactions (also mentioned as "sales" herein):
+
+#### A. "weekday" is a character variable with the days of the week as levels. We have used the factor() function to order them 1-7 starting with "Monday".
+
+``` {r}
+walmart$weekday = factor(walmart$weekday, levels = c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"), ordered = TRUE)
+str(walmart$weekday)
+```
+
+
+#### B. "holiday_indicator" is a binary logical variable that was recorded as TRUE for transactions taking place on a holiday.
+
+```{r}
+str(walmart$holiday_indicator)
+```
+
+#### C. "weather_conditions" is a character variable with four levels: "Sunny", "Cloudy", "Rainy", and "Stormy". These are not ordered.
+
+``` {r}
+walmart$weather_conditions = factor(walmart$weather_conditions, levels = c("Stormy", "Rainy", "Sunny", "Cloudy"), ordered = FALSE)
+unique(walmart$weather_conditions)
+```
+
+## EDA
+
+First, Let's expand the "holiday_indicator" category next to the transaction dates to figure out if these are only national holidays or a larger set.
+
+```{r}
+HOLIDAYS = data.frame(walmart$transaction_date, walmart$holiday_indicator)
+xkabledplyhead(HOLIDAYS, rows = 15)
+```
+
+We can see from the HOLIDAYS DataFrame that these holidays likely refer to promotional periods run by Walmart surrounding national and other holidays such as July 4th, Juneteenth, etc, rather than single days. However, we would need more data or another document to confirm this, such as a Walmart internal schedule or historical list of holidays observed by the store (These days are obviously not days where the store closes, as they are days where transactions took place).
+
+### Bar Charts
+```{r}
+ggplot(walmart, aes(x = weekday, fill = category)) + geom_bar(position = "dodge") + labs(x = "Day of the week", y = "Number of Transactions",title = "Sales on different days of the week", fill= "Category")
+ggplot(walmart, aes(x = holiday_indicator,  fill = category)) + geom_bar(position = "dodge") + labs(x = "Holiday vs. Non-holiday", y = "Number of Transactions", title = "Sales on holidays vs. normal days", fill = "Category", )
+ggplot(walmart, aes(x = weather_conditions, fill = category)) + geom_bar(position = "dodge") + labs(x = "Weather", y = "Transactions", title = "Sales on days with different kinds of weather", fill = "Category")
+```
+
+There is no clear trend indicating that any of the three qualifiers affect the sales of electronics versus appliances, though we do see that electronics noticeably outsell appliances on Mondays. Overall, electronics sell better but not by much. Next we'll use Chi tests to confirm whether these variables have an impact on category value or not.
+
+## Hypothesis Testing
+
+First, we'll need to create a contingency table for each variable paired with category.
+
+```{r}
+contabwk = table(walmart$category, walmart$weekday)
+contabhol = table(walmart$category, walmart$holiday_indicator)
+contabwthr = table(walmart$category, walmart$weather_conditions)
+```
+
+#### Contingency Table for Category and Day of the Week
+```{r}
+xkabledply(contabwk, title = "Contingency Table: Category + Day of the Week")
+```
+
+
+#### Contingency Table for Category and Holiday Indicator
+```{r}
+xkabledply(contabhol, title = "Contingency Table: Category + Holiday Indicator")
+```
+
+
+#### Contingency Table for Category and Type of Weather
+```{r}
+xkabledply(contabwthr, title = "Contingency Table: Category + Type of Weather")
+```
+
+
+### A. Testing Day of the Week
+
+For (A), our alpha value is 0.05. Our null hypothesis is that day of the week has no impact on whether electronics or appliances sell better than the other. Our alternative hypothesis is that the day of the week will have some correlation with the category that sells better.
+```{r}
+chitestwk = chisq.test(contabwk)
+chitestwk
+```
+
+### B. Testing Holidays vs. Non-holidays
+
+For (B) our alpha value will be 0.05 and our null hypothesis is that the day of sale being holiday does not impact whether electronics or appliances outsells the other. Our alternative hypothesis is that the presence of a holiday or a non-holiday will show some impact on which level of the category variable records more transactions.
+```{r}
+chitesthol = chisq.test(contabhol)
+chitesthol
+```
+
+### C. Testing Type of Weather
+
+For (C) our alpha value will be 0.05 and our null hypothesis is that the type of weather has no impact on whether electronics or appliances sells better that day. Our alternative hypothesis is that the type of whether will show some impact on which level of the category variable records more transactions.
+```{r}
+chitestwthr = chisq.test(contabwthr)
+chitestwthr
+```
+
+### 2 - Conclusions
+
+For variable A - day of the week, we report a p-value of 0.25. Since this is higher than our alpha level, we fail to reject the null hypothesis; in other words, there does not appear to be any correlation between the day of the week and the strength of appliance sales vs. electronics sales.
+
+For variable B - holiday presence, we report a p-value of 0.89. This is similarly higher than our alpha level, so we once again fail to reject the null hypothesis; whether or not a transaction takes place on a Walmart-recorded holiday does not seem to influence whether that purchase is more likely to be an appliance or electronics.
+
+Finally, for variable C - type of weather, we report a p-value of 0.74. Once again, this value is higher than our alpha level and we fail to reject our null hypothesis. There does not appear to be any correlation between the type of weather and the category of device that a customer chooses to purchase.
+
+
