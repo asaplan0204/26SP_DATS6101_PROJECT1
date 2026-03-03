@@ -181,7 +181,7 @@ Looking at both electronics customer income and appliances customer income using
 
 ## Sketched answer:
 
-Through different hypothesis testing on our variables of store location, customer loyalty level, payment method, and customer income.  The data suggests that all of our variables are independent or share the same population mean when compared across the variable category.
+My overall quick sketch of an answer to our question would be that customer income most likely will not have an association to the category variable, while the other categorical variables may have an association with the category variable.
 
 ## Hypothesis Testing:
 
