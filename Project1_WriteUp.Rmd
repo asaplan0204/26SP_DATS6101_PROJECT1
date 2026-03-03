@@ -375,4 +375,117 @@ For variable B - holiday presence, we report a p-value of 0.89. This is similarl
 
 Finally, for variable C - type of weather, we report a p-value of 0.74. Once again, this value is higher than our alpha level and we fail to reject our null hypothesis. There does not appear to be any correlation between the type of weather and the category of device that a customer chooses to purchase.
 
+```
+title: "EDA_Ali mutasim"
+output: html_document
+date: "2026-02-28"
+---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+#introducing the dataset and variables
+
+```{r walmart dataset setup}
+walmart = read.csv("C:/Users/alimu/Downloads/Walmart.csv")
+w <- walmart[, c("customer_age", "category", "quantity_sold", "unit_price", "customer_gender")]
+customer_age = as.numeric(walmart$customer_age)
+customer_gender = as.factor(walmart$customer_gender)
+unit_price = as.numeric(walmart$unit_price)
+quantity_sold = as.numeric(walmart$quantity_sold)
+walmart$category = as.factor(walmart$category)
+```
+
+The csv file is converted into a dataframe called walmart. customer_age, unit_price, quantity_sold are converted into a numeric format that doesn't change the walmart dataset. These converted variables are stored separately. Customer_gender and category are changed into categorical and stored separately as well.
+
+#checking if NA values exist in the variables
+
+```{r}
+colSums(is.na(walmart))
+```
+
+this is used to check for any values that are read as NA. The code output suggests that there are no NA values so it won't skew the data. 
+
+
+## Summary statistics
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+summary(w)
+```
+This command gives a summary of the files listed in the vector w. this provides summary statistics such as median, mean, and the quartiles for the numeric variables. As for the categorical variables, length is provided and types. 
+
+
+#Exploratory data analysis.
+
+
+```{r}
+#EDA of total revenue for appliances and electronics
+library(ggplot2)
+
+
+ggplot(walmart, aes(x = category, y = unit_price, fill = category)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("Appliances" = "purple",
+                               "Electronics" = "red")) +
+  labs(title = "Unit Price by Category",
+       x = "Category",
+       y = "Unit Price") +
+  theme_minimal()
+
+ggplot(walmart, aes(x = category, y = quantity_sold, fill = category)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("Appliances" = "purple",
+                               "Electronics" = "red")) +
+  labs(title = "Quantity Sold by Category",
+       x = "Category",
+       y = "Quantity Sold") +
+  theme_minimal()
+
+ggplot(walmart, aes(x = category, y = customer_age, fill = category)) +
+  geom_boxplot() +
+  scale_fill_manual(values = c("Appliances" = "purple",
+                               "Electronics" = "red")) +
+  labs(title = "Customer Age by Category",
+       x = "Category",
+       y = "Customer Age") +
+  theme_minimal()
+
+ggplot(walmart, aes(x = category, fill = customer_gender)) +
+  geom_bar(position = "dodge") +
+  labs(title = "Gender Distribution by Category",
+       x = "Category",
+       y = "Number of Transactions",
+       fill = "Gender")
+```
+ .The data looks very similar across all of the plots. EDA is conducted to see data distribution among the four variables across the two categories, Appliances and electronics. The data seems to equally distributed in a plots, with no favoritism to one category. 
+ 
+ 
+ 
+#Hypothesis testing using chi-square test of independence and welch t-tests.
+```{r}
+t.test(unit_price ~ category, data = walmart)
+
+t.test(quantity_sold ~ category, data = walmart)
+
+t.test(customer_age ~ category, data = walmart)
+
+```
+Null hypothesis for the t-test: mean unit price of appliances is equal to the mean unit price of electronics. p-value is more than 0.05 so its fails to reject it. For the second test the null hypothesis states that the mean quantity sold of appliances is the equal to the mean quantity sold of electronics. The null hypothesis for the third t-test is mean customer age in appliances is the same as the mean customer age in electronics.The t-tests were used to show any significant differences in unit_price,quantity sold, customer age, and revenue within the the two categories and they all seem to fail to reject the null hypothesis. There isn't a difference in three of the tests. However customer age and category accept the alternate hypothesis. There's disparity in the age groups within the two categories. 
+
+
+```{r}
+
+contable_gender = table(walmart$category, walmart$customer_gender)
+chisq.test(contable_gender)
+
+```
+The first code creates a contingency table, which shows how many observations fall into a combination of categories and customer_gender. A chi-square test of independence is used to show whether gender and categories are independent of each other. This means that the null hypothesis would be that gender and category are independent of each other and that both categories have equal distributions of gender. Since 0.631 is higher than 0.5, we fail to reject the null hypothesis
