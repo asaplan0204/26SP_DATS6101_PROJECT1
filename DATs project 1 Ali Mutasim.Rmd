@@ -16,7 +16,7 @@ When you click the **Knit** button a document will be generated that includes bo
 
 ```{r walmart dataset setup}
 walmart = read.csv("C:/Users/alimu/Downloads/Walmart.csv")
-w <- walmart[, c("transaction_id", "category", "quantity_sold", "unit_price")]
+w <- walmart[, c("customer_age", "customer_gender", "category", "quantity_sold", "unit_price")]
 customer_age = as.factor(w$customer_age)
 customer_gender = as.factor(w$customer_gender)
 unit_price = as.factor(w$unit_price)
@@ -34,8 +34,6 @@ colSums(is.na(walmart))
 ```
 
 
-
-
 ## Summary statistics
 
 You can also embed plots, for example:
@@ -49,11 +47,6 @@ summary(w)
 
 ```{r}
 #EDA of total revenue for appliances and electronics
-library(ggplot2)
-
-total_rev = aggregate(revenue ~ category, data = walmart, FUN = sum)
-
-
 library(ggplot2)
 
 ggplot(walmart, aes(x = category, y = unit_price, fill = category)) +
@@ -93,7 +86,7 @@ ggplot(walmart, aes(x = category, fill = customer_gender)) +
 The data looks very similar across all of the plots.
 
 ```{r}
-t.test(revenue ~ category, data = walmart)
+t.test(unit_price ~ category, data = walmart)
 
 t.test(quantity_sold ~ category, data = walmart)
 
@@ -117,5 +110,6 @@ Similarily, the chi-square test didn't show a disparity between genders as sales
 
 ```
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
 
 
