@@ -13,10 +13,18 @@ output:
     toc: yes
     toc_depth: '3'
 ---
-# Intro
+# Walmart
 ```{r init, include=F}
 library(ezids)
 ```
+
+#### - S.M.A.R.T Questions:
+
+Which customer, store, time, promotion, and weather factors are associated with whether a Walmart purchase is an appliance or an electronic product?
+
+This Walmart dataset contains 5000 records of transactions.  Each individual record represents one transaction from a customer.  Each individual record has a variable attached to the transaction representing what type of item was purchased.  That variable is called the category variable and its values are either electronics or appliances.  There are many other variables within our dataset, but we limited our investigation down to 14 variables that could have an association with the category variable.  Our data set was gathered through the free online platform Kaggle.com.  Some analysis that is seen within real world retail companies are studies such as demographic of customers and their locations or seasonal sales trends and promotional effects.  Initially with the background of retail analysis we formatted our first try at the smart question based on aggregations such as total revenue and/or average revenue per transaction.
+However, once we did our Exploratory Data Analysis we started to see these 14 variables could have associations with our category variable.  Which led to us abandoning our original smart question, and just working through the exploratory data analysis and the hypothesis testing of all 14 variables.  Once we started to see a more clear answer to our unknown question we were able to put what we were looking for on paper.  It was hard to initially say our smart question due to having so many variables to look at, but once we analyzed all the variables it was easy to formulate our final smart question.  Overall, our research is focussed on finding which individual variables have statistically shown evidence of an association with the variable category being either electronics or appliances.
+
 
 # 1. Store Location, Customer Loyalty Level, Payment Method, and Customer Income On Category:
 
@@ -107,7 +115,7 @@ ggplot(walmart, aes(x = payment_method, fill = category)) +
 
 Looking at the different grouped bar charts that consist of store location, customer loyalty level, and payment method comparing them to the number of transactions filled by the category variable.  The electronics transactions have a tendency to exceed the appliance transactions for the most part.  There are a few cases such as New York, NY having appliance transactions exceed electronics transactions or the silver customer loyalty level having the same amount of electronic transactions as appliance transactions.  So, there is a pattern of electronics out weighing appliances for when looking at store location, customer loyalty level, and payment method.
 
-The last variable to be explored in this section is customer income.  This variable is numerical so no need to factor it as R will treat this variable correctly. However, I will split appliances and electronics transactions into subset in order to see the distribution for each category by customer income.
+The last variable to be explored in this section is customer income.  This variable is numerical so no need to factor it as R will treat this variable correctly. However, I will split appliances and electronics transactions into subsets in order to see the distribution for each category by customer income.
 
 #### - Summary of customer income:
 
