@@ -1,0 +1,155 @@
+---
+title: "Walmart Sales Analysis: Electronics vs Appliances (EDA)"
+author: "Pablo"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    toc_float: true
+    code_folding: show
+---
+```{r, echo=TRUE}
+knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(effsize)
+```
+
+```{r, echo=TRUE}
+walmart <- read_csv("Walmart.csv") %>%
+  clean_names() %>%
+  mutate(
+    transaction_date = mdy_hm(transaction_date),
+    transaction_day  = as.Date(transaction_date),
+    revenue          = quantity_sold * unit_price,
+    category         = as.factor(category),
+    promotion_applied = as.factor(promotion_applied),
+    promotion_type   = as.factor(promotion_type)
+  ) %>%
+  filter(
+    transaction_day >= as.Date("2023-12-31"),
+    transaction_day <= as.Date("2024-09-16")
+  )
+```
+# Quick checks
+
+```{r, echo=TRUE}
+glimpse(walmart)
+table(walmart$category)
+table(walmart$promotion_applied)
+```
+
+The variable promotion_applied is a binary indicator that takes the value TRUE when a promotion was applied to a transaction and FALSE when no promotion was applied. In this dataset, 2,607 transactions included a promotion while 2,393 did not, providing a relatively balanced comparison between the two groups. This allows us to meaningfully evaluate whether promotions influence quantity sold and revenue per transaction.
+
+# SMART Question Focus: Compare Electronics vs Appliances Using Required Variables
+
+We analyze how Electronics vs Appliances compare in revenue and quantity sold, while incorporating:
+
+transaction_date (time)
+
+promotion_applied (promo vs no promo)
+
+promotion_type (types of promo)
+
+The variable promotion_applied is a binary indicator that takes the value TRUE when a promotion was applied to a transaction and FALSE when no promotion was applied. In this dataset, 2,607 transactions included a promotion while 2,393 did not, providing a relatively balanced comparison between the two groups. This allows us to meaningfully evaluate whether promotions influence quantity sold and revenue per transaction.
+
+
+
+```{r, echo=TRUE}
+ggplot(walmart, aes(x = promotion_applied, y = revenue)) +
+  geom_boxplot(outlier.alpha = 0.3) +
+  labs(title = "Revenue by Promotion Applied", x = "Promotion Applied", y = "Revenue") +
+  theme_minimal()
+```
+
+
+```{r, echo=TRUE}
+ggplot(walmart, aes(x = promotion_applied, y = quantity_sold)) +
+  geom_boxplot(outlier.alpha = 0.3) +
+  geom_jitter(width = 0.15, alpha = 0.08) +
+  labs(
+    title = "Quantity Sold by Promotion Applied",
+    x = "Promotion Applied",
+    y = "Quantity Sold"
+  ) +
+  theme_minimal()
+```
+
+The boxplot and jittered observations show nearly identical distributions of quantity sold between transactions with and without promotions. The median quantity is approximately three units in both groups, and the interquartile ranges overlap substantially. Visually, there is no clear evidence that applying a promotion increases the number of items purchased per transaction. 
+
+Each dot represents one transaction, and the overlapping clusters show that quantity purchased looks nearly identical regardless of whether a promotion was applied.
+
+```{r, echo=TRUE}
+walmart %>%
+  group_by(promotion_applied) %>%
+  summarise(
+    mean_quantity = mean(quantity_sold),
+    sd_quantity = sd(quantity_sold),
+    n = n()
+  )
+```
+
+```{r, echo=TRUE}
+t.test(quantity_sold ~ promotion_applied, data = walmart)
+```
+# Hypothesis test
+Null Hypothesis (H0):
+The mean quantity sold per transaction is the same for transactions with a promotion and transactions without a promotion.
+
+Alternative Hypothesis (H1):
+The mean quantity sold per transaction is different between transactions with a promotion and transactions without a promotion
+
+The Welch two-sample t-test indicates no statistically significant difference in the mean quantity sold between transactions with and without promotions (p = 0.939). The average quantity sold is approximately 2.98 units in both groups, and the 95% confidence interval includes zero, suggesting that the true difference in means may be zero. Overall, the data provide no evidence that applying a promotion increases the number of items purchased per transaction.
+
+
+# --- Step 3: Effect Size ---
+
+```{r, echo=TRUE}
+cohen.d(quantity_sold ~ promotion_applied, data = walmart)
+```
+Cohen d was calculated to evaluate the practical significance of the difference in quantity sold between transactions with and without promotions. The estimated effect size is -0.002, which is classified as negligible. The 95% confidence interval includes zero, further indicating that the difference is not meaningful. Together with the t-test results, this confirms that promotions do not meaningfully affect the number of items purchased per transaction.
+
+
+# Type of Promotion Check
+```{r, echo=TRUE}
+table(walmart$promotion_type)
+```
+
+```{r, echo=TRUE}
+ggplot(walmart, aes(x = promotion_type, y = revenue)) +
+  geom_boxplot(outlier.alpha = 0.3) +
+  coord_flip() +
+  theme_minimal() +
+  labs(title = "Revenue by Promotion Type",
+       x = "Promotion Type",
+       y = "Revenue")
+```
+
+```{r, echo=TRUE}
+top_two <- walmart %>%
+  count(promotion_type, sort = TRUE) %>%
+  slice(1:2) %>%
+  pull(promotion_type)
+
+walmart_two <- walmart %>%
+  filter(promotion_type %in% top_two) %>%
+  droplevels()
+
+t.test(revenue ~ promotion_type, data = walmart_two)
+```
+
+Null Hypothesis (H0):
+The mean revenue per transaction is the same for BOGO promotions and transactions with no promotion.
+
+Alternative Hypothesis (H1):
+The mean revenue per transaction is different between BOGO promotions and transactions with no promotion.
+
+There is no statistically significant difference in mean revenue between BOGO promotions and no promotion.
+
+The confidence interval includes zero, meaning the true difference could reasonably be zero.
+
+Although BOGO has a slightly higher average revenue (~$60 difference), this difference is small relative to overall revenue variability and is not statistically meaningful.
+
+A Welch two-sample t-test was conducted to compare mean transaction revenue between BOGO promotions and transactions without a promotion. The results indicate no statistically significant difference in average revenue (p = 0.508). While BOGO promotions show a slightly higher mean revenue per transaction (3091.45 vs 3031.37), the 95% confidence interval includes zero, suggesting that the observed difference may be due to random variation. Overall, the data provide no evidence that BOGO promotions increase revenue per transaction relative to no promotion.
