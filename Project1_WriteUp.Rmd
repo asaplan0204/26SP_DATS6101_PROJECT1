@@ -18,7 +18,11 @@ output:
 library(ezids)
 ```
 
-## - Set up of dataset walmart:
+# 1. Store Location, Customer Loyalty Level, Payment Method, and Customer Income On Category:
+
+## Author of this section: "Aspen Saplan"
+
+## Set up of dataset walmart:
 ```{r, echo=TRUE}
 #getwd()
 walmart = read.csv("Walmart.csv")
@@ -26,10 +30,12 @@ walmart$category = as.factor(walmart$category)
 walmart$store_location = as.factor(walmart$store_location)
 walmart$customer_loyalty_level = as.factor(walmart$customer_loyalty_level)
 walmart$payment_method = as.factor(walmart$payment_method)
-print(str(walmart))
+print(str(walmart$category))
+print(str(walmart$store_location))
+print(str(walmart$customer_loyalty_level))
+print(str(walmart$payment_method))
+print(str(walmart$customer_income))
 ```
-
-# 1. Store Location, Customer Loyalty Level, Payment Method, and Customer Income On Category:
 
 The variables that will be focussed on in this section will be store location, customer loyalty level, payment method, and  customer income when comparing to the category variable. 
 
