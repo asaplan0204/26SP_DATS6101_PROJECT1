@@ -466,7 +466,7 @@ ggplot(walmart, aes(x = category, fill = customer_gender)) +
        y = "Number of Transactions",
        fill = "Gender")
 ```
- .The data looks very similar across all of the plots. EDA is conducted to see data distribution among the four variables across the two categories, Appliances and electronics. The data seems to equally distributed in a plots, with no favoritism to one category. 
+The data looks very similar across all of the plots. EDA is conducted to see data distribution among the four variables across the two categories, Appliances and electronics. The data seems to equally distributed in a plots, with no favoritism to one category. 
  
  
  
@@ -656,7 +656,7 @@ walmart %>%
 The bar chart shows the proportion of transactions that belong to the Electronics category across different promotion types. The proportions appear very similar across all promotion types. BOGO promotions show the slightly highest proportion of Electronics purchases, followed by transactions with no promotion, while Percentage Discount promotions show the lowest proportion. However, the differences are small, suggesting that promotion type may not strongly influence whether customers purchase Electronics versus Appliances.
 
 ```{r}
-#Contingency table
+# Contingency table
 table(walmart$promotion_type, walmart$category)
 
 # Chi-square test
