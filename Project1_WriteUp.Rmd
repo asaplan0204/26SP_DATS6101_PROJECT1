@@ -47,7 +47,7 @@ print(str(walmart$customer_income))
 
 The variables that will be focussed on in this section will be store location, customer loyalty level, payment method, and  customer income when comparing to the category variable. 
 
-The three qualitative or factor variables in this section are store location, customer loyalty level, and payment method. Store location is made up of four total locations being Chicago, IL: Dallas, TX; Los Angeles, CA; Miami, FL; New York, NY. Customer loyalty level consists of four total levels being platinum, gold, silver and bronze.  Payment method consists of four total payment options being cast, credit card, debit card, and digital wallet.
+The three qualitative or factor variables in this section are store location, customer loyalty level, and payment method. Store location is made up of four total locations being Chicago, IL: Dallas, TX; Los Angeles, CA; Miami, FL; New York, NY. Customer loyalty level consists of four total levels being platinum, gold, silver and bronze.  Payment method consists of four total payment options being cash, credit card, debit card, and digital wallet.
 
 #### - Summary statistics of store location:
 
