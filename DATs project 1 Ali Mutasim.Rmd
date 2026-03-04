@@ -15,7 +15,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
 ```{r walmart dataset setup}
-walmart = read.csv("C:/Users/alimu/Downloads/Walmart.csv")
+walmart = read.csv("Walmart.csv")
 w <- walmart[, c("customer_age", "customer_gender", "category", "quantity_sold", "unit_price")]
 customer_age = as.factor(w$customer_age)
 customer_gender = as.factor(w$customer_gender)
@@ -110,6 +110,7 @@ Similarily, the chi-square test didn't show a disparity between genders as sales
 
 ```
 Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
 
 
 
