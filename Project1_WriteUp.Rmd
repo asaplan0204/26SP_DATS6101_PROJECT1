@@ -394,7 +394,7 @@ When you click the **Knit** button a document will be generated that includes bo
 #introducing the dataset and variables
 
 ```{r walmart dataset setup}
-walmart = read.csv("C:/Users/alimu/Downloads/Walmart.csv")
+walmart = read.csv("Walmart.csv")
 w <- walmart[, c("customer_age", "category", "quantity_sold", "unit_price", "customer_gender")]
 customer_age = as.numeric(walmart$customer_age)
 customer_gender = as.factor(walmart$customer_gender)
