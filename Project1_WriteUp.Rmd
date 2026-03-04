@@ -466,7 +466,7 @@ ggplot(walmart, aes(x = category, fill = customer_gender)) +
        y = "Number of Transactions",
        fill = "Gender")
 ```
- .The data looks very similar across all of the plots. EDA is conducted to see data distribution among the four variables across the two categories, Appliances and electronics. The data seems to equally distributed in a plots, with no favoritism to one category. 
+The data looks very similar across all of the plots. EDA is conducted to see data distribution among the four variables across the two categories, Appliances and electronics. The data seems to equally distributed in a plots, with no favoritism to one category. 
  
  
  
@@ -507,12 +507,21 @@ library(tidyverse)
 library(lubridate)
 library(janitor)
 library(effsize)
+library(dplyr)
 ```
 
+# Data Preparation
+Clean column names
+
 ```{r, echo=TRUE}
-# Make sure factors are clean
+walmart <- walmart %>% clean_names()
+```
+
+# Keep original transaction_date in a RAW column 
+```{r, echo=TRUE}
 walmart <- walmart %>%
   mutate(
+    transaction_date_raw = transaction_date,
     category = as.factor(category),
     promotion_applied = as.factor(promotion_applied),
     promotion_type = as.factor(promotion_type)
@@ -520,28 +529,64 @@ walmart <- walmart %>%
 ```
 
 
-# Create binary category indicator for t-tests:
+Robust date parsing (handles multiple formats + optional timestamps)
+We create a NEW column transaction_date_clean so we never break the original
+```{r, echo=TRUE}
+walmart <- walmart %>%
+  mutate(
+    transaction_date_clean = parse_date_time(
+      transaction_date_raw,
+      orders = c("mdy", "dmy", "ymd", "mdy HMS", "dmy HMS", "ymd HMS"),
+      quiet = TRUE
+    ),
+    transaction_date_clean = as.Date(transaction_date_clean)
+  )
+```
 
-# 1 = Electronics, 0 = Appliances
+Quick check
+```{r, echo=TRUE}
+summary(walmart$transaction_date_clean)
+sum(is.na(walmart$transaction_date_clean))
+```
+
+# Binary indicator: 1 = Electronics, 0 = Appliances
 ```{r, echo=TRUE}
 walmart <- walmart %>%
   mutate(category_bin = if_else(category == "Electronics", 1, 0))
 ```
 
 
-# Graph: proportion of Electronics by promotion_applied
+# EDA ??? Transaction Date
+
+```{r, echo=TRUE}
+walmart %>%
+  filter(!is.na(transaction_date_clean)) %>%
+  count(transaction_date_clean) %>%
+  ggplot(aes(x = transaction_date_clean, y = n)) +
+  geom_line(color = "gray40", linewidth = 0.6) +
+  geom_smooth(method = "loess", color = "#E15759", linewidth = 1.2, se = FALSE) +
+  labs(
+    title = "Number of Transactions Over Time",
+    x = "Transaction Date",
+    y = "Number of Transactions"
+  ) +
+  theme_minimal()
+```
+
+The time series plot shows daily transaction counts across the observation period. While there is substantial day-to-day variation, the smoothed trend line indicates that transaction volume remains relatively stable over time. No clear upward or downward trend is observed, suggesting that temporal effects are unlikely to bias comparisons between product categories or promotional strategies.
+
+# EDA: Proportion of Electronics by Promotion Applied
+
 ```{r, echo=TRUE}
 walmart %>%
   group_by(promotion_applied) %>%
-  summarise(prop_electronics = mean(category_bin),
-            n = n(),
-            .groups = "drop") %>%
-  ggplot(aes(x = promotion_applied, 
-             y = prop_electronics, 
-             fill = promotion_applied)) +
+  summarise(
+    prop_electronics = mean(category_bin),
+    n = n(),
+    .groups = "drop"
+  ) %>%
+  ggplot(aes(x = promotion_applied, y = prop_electronics, fill = promotion_applied)) +
   geom_col(width = 0.6) +
-  scale_fill_manual(values = c("FALSE" = "#4E79A7",
-                               "TRUE"  = "#E15759")) +
   labs(
     title = "Proportion of Electronics Transactions by Promotion Applied",
     x = "Promotion Applied",
@@ -551,65 +596,84 @@ walmart %>%
   theme(legend.position = "none")
 ```
 
-The bar chart displays the proportion of Electronics transactions among transactions with and without promotions. The proportions are nearly identical across both groups, suggesting that applying a promotion does not meaningfully shift transactions toward either Electronics or Appliances.
 
-# t-test: does the proportion of Electronics differ by promotion_applied"
+The bar chart compares the proportion of Electronics transactions between purchases with and without promotions. The proportions are nearly identical across both groups, with approximately 52% of transactions belonging to Electronics when no promotion is applied and about 51% when a promotion is present. This suggests that applying a promotion does not substantially influence whether a transaction belongs to the Electronics or Appliances category.
 
 ```{r, echo=TRUE}
 t.test(category_bin ~ promotion_applied, data = walmart)
 ```
 
-Hypotheses
-
 Null Hypothesis (H0):
-The proportion of Electronics transactions is the same for transactions with and without promotions.
+The proportion of Electronics transactions is the same for transactions with promotions and without promotions.
 
 Alternative Hypothesis (H1):
-The proportion of Electronics transactions differs between transactions with and without promotions.
+The proportion of Electronics transactions differs between transactions with promotions and without promotions.
 
+Test Results and Interpretation
 
-The Welch two-sample t-test shows no statistically significant difference in the proportion of Electronics transactions between transactions with and without promotions (p = 0.578). The estimated proportions are 52.1% for transactions without promotions and 51.3% for transactions with promotions. The 95% confidence interval includes zero, indicating that the true difference in proportions may be zero.
+A Welch two-sample t-test was conducted to compare the proportion of Electronics transactions between purchases with and without promotions.
 
-Overall, the data provide no evidence that applying a promotion changes the likelihood that a transaction belongs to the Electronics category rather than Appliances.
+The results show no statistically significant difference between the two groups (t = 0.556, p = 0.578). Transactions without promotions had an Electronics proportion of 52.1%, while transactions with promotions had a proportion of 51.3%.
 
+The 95% confidence interval [-0.0199, 0.0356] includes zero, indicating that the true difference in proportions may be zero. Therefore, we fail to reject the null hypothesis.
 
-# Graph: quantity_sold by category
-```{r, echo=TRUE}
-ggplot(walmart, aes(x = category, y = quantity_sold)) +
-  geom_boxplot(outlier.alpha = 0.3) +
-  geom_jitter(width = 0.15, alpha = 0.08) +
-  labs(
-    title = "Quantity Sold per Transaction by Category",
-    x = "Category",
-    y = "Quantity Sold"
-  ) +
-  theme_minimal()
-```
+Overall, the data provide no statistical evidence that applying a promotion changes the likelihood that a transaction belongs to the Electronics category rather than Appliances.
+
 
 ```{r, echo=TRUE}
 walmart %>%
-  group_by(category) %>%
-  summarise(
-    mean_quantity = mean(quantity_sold),
-    sd_quantity = sd(quantity_sold),
-    n = n(),
-    .groups = "drop"
-  )
+  count(promotion_type) %>%
+  ggplot(aes(x = promotion_type, y = n, fill = promotion_type)) +
+  geom_col() +
+  labs(
+    title = "Distribution of Promotion Types",
+    x = "Promotion Type",
+    y = "Number of Transactions"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
 ```
 
-The average number of units purchased per transaction is nearly identical across categories. Appliances transactions have a mean of 2.97 units, while Electronics transactions have a mean of 3.00 units. The standard deviations are also very similar (1.41 and 1.43, respectively), indicating comparable variability in purchase behavior. Overall, there is no meaningful difference in the number of items purchased per transaction between the two categories.
-
-# t-test: does mean quantity differ by category
+The bar chart shows the number of transactions associated with each promotion type. The majority of transactions in the dataset occur without a promotion, while BOGO and Percentage Discount promotions appear less frequently and at similar levels. This distribution indicates that promotional strategies are used in a smaller portion of transactions compared to purchases with no promotion applied.
 
 ```{r, echo=TRUE}
-t.test(quantity_sold ~ category, data = walmart)
+walmart %>%
+  group_by(promotion_type) %>%
+  summarise(prop_electronics = mean(category_bin),
+            n = n(),
+            .groups = "drop") %>%
+  ggplot(aes(x = promotion_type, y = prop_electronics, fill = promotion_type)) +
+  geom_col() +
+  labs(
+    title = "Proportion of Electronics Transactions by Promotion Type",
+    x = "Promotion Type",
+    y = "Proportion Electronics"
+  ) +
+  theme_minimal() +
+  theme(legend.position = "none")
 ```
 
+The bar chart shows the proportion of transactions that belong to the Electronics category across different promotion types. The proportions appear very similar across all promotion types. BOGO promotions show the slightly highest proportion of Electronics purchases, followed by transactions with no promotion, while Percentage Discount promotions show the lowest proportion. However, the differences are small, suggesting that promotion type may not strongly influence whether customers purchase Electronics versus Appliances.
+
+```{r}
+# Contingency table
+table(walmart$promotion_type, walmart$category)
+
+# Chi-square test
+chisq.test(walmart$promotion_type, walmart$category)
+```
+Hypothesis Test: Promotion Type and Product Category
+
+To determine whether promotion type influences the type of product purchased (Electronics vs Appliances), a Chi-square test of independence was conducted.
 
 Null Hypothesis (H0):
-The mean quantity sold per transaction is the same for Appliances and Electronics.
+The product category purchased (Electronics vs Appliances) is independent of the promotion type.
 
 Alternative Hypothesis (H1):
-The mean quantity sold per transaction differs between Appliances and Electronics.
+The product category purchased (Electronics vs Appliances) depends on the promotion type.
 
-The Welch two-sample t-test shows no statistically significant difference in the average number of units purchased per transaction between Appliances and Electronics (p = 0.492). Appliances transactions have a mean of 2.97 units, while Electronics transactions have a mean of 3.00 units. The 95% confidence interval includes zero, indicating that the true difference in means may be zero. Therefore, there is no statistical evidence that customers purchase more units per transaction in one category compared to the other.
+The contingency table shows the number of transactions by promotion type and product category. For example, BOGO promotions resulted in 388 Appliances purchases and 432 Electronics purchases, while transactions with no promotion resulted in 1634 Appliances purchases and 1773 Electronics purchases.
+
+The Pearson Chi-square test produced a p-value of 0.2903, which is greater than the significance level of 0.05. Therefore, we fail to reject the null hypothesis.
+
+This result suggests that there is no statistically significant relationship between promotion type and whether customers purchase Electronics or Appliances. The proportions of Electronics purchases appear relatively similar across BOGO, Percentage Discount, and transactions with no promotion, which is consistent with the patterns observed in the exploratory data analysis.
