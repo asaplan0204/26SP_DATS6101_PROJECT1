@@ -261,7 +261,7 @@ ttestCI = t.test(appliances$customer_income, electronics$customer_income)
 ttestCI
 ```
 
-After running the t-test on appliances customer income and electronics customer income we can see that our p-value returned is 0.1725.  Comparing our p-value(0.1725) and our alpha value(0.05) we can see that the p-value is greater than alpha.  Thus, since our p-value is greater than our alpha we fail to reject the null hypothesis.  So, the evidence does not suggest that a higher or lower income is associated with purchasing electronics over appliances and vice versa.
+After running the t-test on appliances customer income and electronics customer income we can see that our p-value returned is 0.1725.  Comparing our p-value(0.1725) and our alpha value(0.05) we can see that the p-value is greater than alpha.  Thus, since our p-value is greater than our alpha we fail to reject the null hypothesis.  So, the evidence does not suggest that an average higher or lower income is associated with purchasing electronics over appliances and vice versa.
 
 ## Outcome:
 
