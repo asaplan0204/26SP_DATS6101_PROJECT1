@@ -377,6 +377,8 @@ Finally, for variable C - type of weather, we report a p-value of 0.74. Once aga
 
 ```
 ---
+
+# 3. EDA on Customer age, gender, quantity sold, and unit price
 title: "EDA_Ali mutasim"
 output: html_document
 date: "2026-02-28"
