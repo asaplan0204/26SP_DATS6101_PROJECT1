@@ -392,7 +392,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-#introducing the dataset and variables
+##Introducing the dataset and variables
 
 ```{r walmart dataset setup}
 walmart = read.csv("Walmart.csv")
@@ -406,7 +406,7 @@ walmart$category = as.factor(walmart$category)
 
 The csv file is converted into a dataframe called walmart. customer_age, unit_price, quantity_sold are converted into a numeric format that doesn't change the walmart dataset. These converted variables are stored separately. Customer_gender and category are changed into categorical and stored separately as well.
 
-#checking if NA values exist in the variables
+## Checking if NA values exist in the variables
 
 ```{r}
 colSums(is.na(walmart))
@@ -425,7 +425,7 @@ summary(w)
 This command gives a summary of the files listed in the vector w. this provides summary statistics such as median, mean, and the quartiles for the numeric variables. As for the categorical variables, length is provided and types. 
 
 
-#Exploratory data analysis.
+## Exploratory data analysis.
 
 
 ```{r}
@@ -471,7 +471,7 @@ The data looks very similar across all of the plots. EDA is conducted to see dat
  
  
  
-#Hypothesis testing using chi-square test of independence and welch t-tests.
+## Hypothesis testing using chi-square test of independence and welch t-tests.
 ```{r}
 t.test(unit_price ~ category, data = walmart)
 
