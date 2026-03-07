@@ -495,16 +495,6 @@ chisq.test(contable_gender)
 The first code creates a contingency table, which shows how many observations fall into a combination of categories and customer_gender. A chi-square test of independence is used to show whether gender and categories are independent of each other. This means that the null hypothesis would be that gender and category are independent of each other and that both categories have equal distributions of gender. Since 0.631 is higher than 0.5, we fail to reject the null hypothesis
 
 
-title: "Walmart Sales Analysis: Electronics vs Appliances (EDA)"
-author: "Pablo"
-date: "`r Sys.Date()`"
-output:
-  html_document:
-    toc: true
-    toc_depth: 3
-    toc_float: true
-    code_folding: show
-
 ```{r, echo=TRUE}
 knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 library(tidyverse)
@@ -514,14 +504,14 @@ library(effsize)
 library(dplyr)
 ```
 
-# Data Preparation
+## Data Preparation
 Clean column names
 
 ```{r, echo=TRUE}
 walmart <- walmart %>% clean_names()
 ```
 
-# Keep original transaction_date in a RAW column 
+## Keep original transaction_date in a RAW column 
 ```{r, echo=TRUE}
 walmart <- walmart %>%
   mutate(
@@ -553,14 +543,14 @@ summary(walmart$transaction_date_clean)
 sum(is.na(walmart$transaction_date_clean))
 ```
 
-# Binary indicator: 1 = Electronics, 0 = Appliances
+## Binary indicator: 1 = Electronics, 0 = Appliances
 ```{r, echo=TRUE}
 walmart <- walmart %>%
   mutate(category_bin = if_else(category == "Electronics", 1, 0))
 ```
 
 
-# EDA ??? Transaction Date
+## EDATransaction Date
 
 ```{r, echo=TRUE}
 walmart %>%
@@ -579,7 +569,7 @@ walmart %>%
 
 The time series plot shows daily transaction counts across the observation period. While there is substantial day-to-day variation, the smoothed trend line indicates that transaction volume remains relatively stable over time. No clear upward or downward trend is observed, suggesting that temporal effects are unlikely to bias comparisons between product categories or promotional strategies.
 
-# EDA: Proportion of Electronics by Promotion Applied
+## EDA: Proportion of Electronics by Promotion Applied
 
 ```{r, echo=TRUE}
 walmart %>%
@@ -683,7 +673,7 @@ The Pearson Chi-square test produced a p-value of 0.2903, which is greater than 
 This result suggests that there is no statistically significant relationship between promotion type and whether customers purchase Electronics or Appliances. The proportions of Electronics purchases appear relatively similar across BOGO, Percentage Discount, and transactions with no promotion, which is consistent with the patterns observed in the exploratory data analysis.
 
 
-# Conclusion
+## Conclusion
 
 Though our initial exploratory data analysis (EDA) seemed to suggest some light correlation between certain variables among our 14 targets, especially as seen in bar charts plotted for store location, day of the week, and customer gender, our hypothesis testing delivered the null result in almost every comparison except for customer age, where we were able to reject the null hyothesis with a p-value of 0.0005. In other words, excepting customer age, none of our tested variables can be said to reliably produce an impact on whether a customer purchased from the electronics category or the appliances category.
 
@@ -699,7 +689,7 @@ Consider the above summaries of the holiday_indicator and weekday variables. It 
 Secondly, the data points as recorded do not obey the intuitive reasoning and understanding of store categorizations in the real world. A prime example of this phenomena is the interaction between the 'product name'
 and 'category' variable:
 
-#### Product names by category
+## Product names by category
 ```{r}
 Conclusion1 = table(walmart$product_name, walmart$category)
 Conclusion1
