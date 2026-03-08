@@ -11,7 +11,7 @@
 
 <meta name="author" content="Aspen Saplan et al." />
 
-<meta name="date" content="2026-03-06" />
+<meta name="date" content="2026-03-08" />
 
 <title>Project 1</title>
 
@@ -1793,7 +1793,7 @@ border-radius: 0px;
 
 <h1 class="title toc-ignore">Project 1</h1>
 <h4 class="author">Aspen Saplan et al.</h4>
-<h4 class="date">2026-03-06</h4>
+<h4 class="date">2026-03-08</h4>
 
 </div>
 
@@ -2806,6 +2806,9 @@ to reject our null hypothesis. There does not appear to be any
 correlation between the type of weather and the category of device that
 a customer chooses to purchase.</p>
 <pre><code>---
+
+## 3. EDA on Customer age, gender, quantity sold, and unit price
+
 title: &quot;EDA_Ali mutasim&quot;
 output: html_document
 date: &quot;2026-02-28&quot;
@@ -2819,7 +2822,7 @@ This is an R Markdown document. Markdown is a simple formatting syntax for autho
 
 When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
 
-#introducing the dataset and variables
+##Introducing the dataset and variables
 
 
 ``` r
@@ -2835,7 +2838,10 @@ customer_age, unit_price, quantity_sold are converted into a numeric
 format that doesn’t change the walmart dataset. These converted
 variables are stored separately. Customer_gender and category are
 changed into categorical and stored separately as well.</p>
-<p>#checking if NA values exist in the variables</p>
+</div>
+</div>
+<div id="checking-if-na-values-exist-in-the-variables" class="section level2">
+<h2>Checking if NA values exist in the variables</h2>
 <pre class="r"><code>colSums(is.na(walmart))</code></pre>
 <pre><code>##         transaction_id            customer_id             product_id 
 ##                      0                      0                      0 
@@ -2861,7 +2867,6 @@ changed into categorical and stored separately as well.</p>
 output suggests that there are no NA values so it won’t skew the
 data.</p>
 </div>
-</div>
 <div id="summary-statistics" class="section level2">
 <h2>Summary statistics</h2>
 <p>You can also embed plots, for example:</p>
@@ -2883,7 +2888,9 @@ data.</p>
 this provides summary statistics such as median, mean, and the quartiles
 for the numeric variables. As for the categorical variables, length is
 provided and types.</p>
-<p>#Exploratory data analysis.</p>
+</div>
+<div id="exploratory-data-analysis." class="section level2">
+<h2>Exploratory data analysis.</h2>
 <pre class="r"><code>#EDA of total revenue for appliances and electronics
 library(ggplot2)
 
@@ -2926,8 +2933,10 @@ The data looks very similar across all of the plots. EDA is conducted to
 see data distribution among the four variables across the two
 categories, Appliances and electronics. The data seems to equally
 distributed in a plots, with no favoritism to one category.</p>
-<p>#Hypothesis testing using chi-square test of independence and welch
-t-tests.</p>
+</div>
+<div id="hypothesis-testing-using-chi-square-test-of-independence-and-welch-t-tests." class="section level2">
+<h2>Hypothesis testing using chi-square test of independence and welch
+t-tests.</h2>
 <pre class="r"><code>t.test(unit_price ~ category, data = walmart)</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
@@ -2991,9 +3000,6 @@ categories are independent of each other. This means that the null
 hypothesis would be that gender and category are independent of each
 other and that both categories have equal distributions of gender. Since
 0.631 is higher than 0.5, we fail to reject the null hypothesis</p>
-<p>title: “Walmart Sales Analysis: Electronics vs Appliances (EDA)”
-author: “Pablo” date: “2026-03-06” output: html_document: toc: true
-toc_depth: 3 toc_float: true code_folding: show</p>
 <pre class="r"><code>knitr::opts_chunk$set(echo=TRUE, message=FALSE, warning=FALSE)
 library(tidyverse)</code></pre>
 <pre><code>## ── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
@@ -3016,14 +3022,13 @@ library(janitor)</code></pre>
 <pre class="r"><code>library(effsize)
 library(dplyr)</code></pre>
 </div>
-</div>
-<div id="data-preparation" class="section level1">
-<h1>Data Preparation</h1>
+<div id="data-preparation" class="section level2">
+<h2>Data Preparation</h2>
 <p>Clean column names</p>
 <pre class="r"><code>walmart &lt;- walmart %&gt;% clean_names()</code></pre>
 </div>
-<div id="keep-original-transaction_date-in-a-raw-column" class="section level1">
-<h1>Keep original transaction_date in a RAW column</h1>
+<div id="keep-original-transaction_date-in-a-raw-column" class="section level2">
+<h2>Keep original transaction_date in a RAW column</h2>
 <pre class="r"><code>walmart &lt;- walmart %&gt;%
   mutate(
     transaction_date_raw = transaction_date,
@@ -3050,13 +3055,13 @@ original</p>
 <pre class="r"><code>sum(is.na(walmart$transaction_date_clean))</code></pre>
 <pre><code>## [1] 5000</code></pre>
 </div>
-<div id="binary-indicator-1-electronics-0-appliances" class="section level1">
-<h1>Binary indicator: 1 = Electronics, 0 = Appliances</h1>
+<div id="binary-indicator-1-electronics-0-appliances" class="section level2">
+<h2>Binary indicator: 1 = Electronics, 0 = Appliances</h2>
 <pre class="r"><code>walmart &lt;- walmart %&gt;%
   mutate(category_bin = if_else(category == &quot;Electronics&quot;, 1, 0))</code></pre>
 </div>
-<div id="eda-transaction-date" class="section level1">
-<h1>EDA ??? Transaction Date</h1>
+<div id="edatransaction-date" class="section level2">
+<h2>EDATransaction Date</h2>
 <pre class="r"><code>walmart %&gt;%
   filter(!is.na(transaction_date_clean)) %&gt;%
   count(transaction_date_clean) %&gt;%
@@ -3077,8 +3082,8 @@ stable over time. No clear upward or downward trend is observed,
 suggesting that temporal effects are unlikely to bias comparisons
 between product categories or promotional strategies.</p>
 </div>
-<div id="eda-proportion-of-electronics-by-promotion-applied" class="section level1">
-<h1>EDA: Proportion of Electronics by Promotion Applied</h1>
+<div id="eda-proportion-of-electronics-by-promotion-applied" class="section level2">
+<h2>EDA: Proportion of Electronics by Promotion Applied</h2>
 <pre class="r"><code>walmart %&gt;%
   group_by(promotion_applied) %&gt;%
   summarise(
@@ -3212,21 +3217,20 @@ appear relatively similar across BOGO, Percentage Discount, and
 transactions with no promotion, which is consistent with the patterns
 observed in the exploratory data analysis.</p>
 </div>
+</div>
 <div id="conclusion" class="section level1">
 <h1>Conclusion</h1>
-<p>Though our initial exploratory data analysis (EDA) seemed to suggest
-some light correlation between certain variables among our 14 targets,
-especially as seen in bar charts plotted for store location, day of the
-week, and customer gender, our hypothesis testing delivered the null
-result in almost every comparison except for customer age, where we were
-able to reject the null hyothesis with a p-value of 0.0005. In other
-words, excepting customer age, none of our tested variables can be said
-to reliably produce an impact on whether a customer purchased from the
-electronics category or the appliances category.</p>
-<p>However, when considering the limitations of the data set and what
-further information could be beneficial to the investigation, several
-observations must be made. First, the detail that almost all of our bar
-charts displayed roughly equal counts for the levels of each variable is
+<p>Though our initial EDA seemed to suggest some light correlation
+between certain variables (store location, day of the week, and customer
+gender), our hypothesis testing delivered the null result in almost
+every comparison except for customer age, where we were able to reject
+the null hyothesis with a p-value of 0.0005. Excepting customer age,
+none of our tested variables can be said to reliably produce an impact
+on whether a customer purchased from the electronics category or the
+appliances category.</p>
+<p>However, when considering the limitations of the data set, several
+observations must be made. First, that almost all of our bar charts
+displayed roughly equal counts for the levels of each variable is
 statistically improbable and raises questions pertaining to how the data
 points (ie. the 5000 transactions) were collected.</p>
 <pre class="r"><code>summary(walmart$holiday_indicator)</code></pre>
@@ -3238,14 +3242,14 @@ points (ie. the 5000 transactions) were collected.</p>
 <p>Consider the above summaries of the holiday_indicator and weekday
 variables. It seems improbable (though not impossible) that almost
 exactly half of the transactions took place on a holiday while
-simultaneousl, roughly 1/7th of the transactions took place on a Monday,
-1/7th on a Tuesday, and so on.</p>
+simultaneously, roughly 1/7th of the transactions took place on a
+Monday, 1/7th on a Tuesday, and so on.</p>
 <p>Secondly, the data points as recorded do not obey the intuitive
 reasoning and understanding of store categorizations in the real world.
 A prime example of this phenomena is the interaction between the
 ‘product name’ and ‘category’ variable:</p>
-<div id="product-names-by-category" class="section level4">
-<h4>Product names by category</h4>
+<div id="product-names-by-category" class="section level2">
+<h2>Product names by category</h2>
 <pre class="r"><code>Conclusion1 = table(walmart$product_name, walmart$category)
 Conclusion1</code></pre>
 <pre><code>##                  
@@ -3260,9 +3264,9 @@ Conclusion1</code></pre>
 ##   Washing Machine        287         327</code></pre>
 <p>As we can see, roughly half of the time a product with the name
 “Camera” is listed as an appliance, as are those named “TV” and
-“Laptop”. This points to a possibly erroneously catalogued data set and
-we elected not to consider product name in our investigation for this
-reason. Finally, it is not plausible to assume that over a span of nine
+“Laptop”. This may point to erroneously catalogued data and we elected
+not to consider product name in our investigation for this reason.</p>
+<p>Finally, it is not plausible to assume that over a span of nine
 months (1/1/2024 - 9/16/2024) and five stores, only 5000 transactions
 took place for the largest retailer in the world, so it would be helpful
 to know what additional filtering variable the author used to assemble

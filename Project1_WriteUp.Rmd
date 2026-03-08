@@ -673,18 +673,18 @@ The Pearson Chi-square test produced a p-value of 0.2903, which is greater than 
 This result suggests that there is no statistically significant relationship between promotion type and whether customers purchase Electronics or Appliances. The proportions of Electronics purchases appear relatively similar across BOGO, Percentage Discount, and transactions with no promotion, which is consistent with the patterns observed in the exploratory data analysis.
 
 
-## Conclusion
+# Conclusion
 
-Though our initial exploratory data analysis (EDA) seemed to suggest some light correlation between certain variables among our 14 targets, especially as seen in bar charts plotted for store location, day of the week, and customer gender, our hypothesis testing delivered the null result in almost every comparison except for customer age, where we were able to reject the null hyothesis with a p-value of 0.0005. In other words, excepting customer age, none of our tested variables can be said to reliably produce an impact on whether a customer purchased from the electronics category or the appliances category.
+Though our initial EDA seemed to suggest some light correlation between certain variables (store location, day of the week, and customer gender), our hypothesis testing delivered the null result in almost every comparison except for customer age, where we were able to reject the null hyothesis with a p-value of 0.0005. Excepting customer age, none of our tested variables can be said to reliably produce an impact on whether a customer purchased from the electronics category or the appliances category.
 
-However, when considering the limitations of the data set and what further information could be beneficial to the investigation, several observations must be made. First, the detail that almost all of our bar charts displayed roughly equal counts for the levels of each variable is statistically improbable and raises questions pertaining to how the data points (ie. the 5000 transactions) were collected.
+However, when considering the limitations of the data set, several observations must be made. First, that almost all of our bar charts displayed roughly equal counts for the levels of each variable is statistically improbable and raises questions pertaining to how the data points (ie. the 5000 transactions) were collected.
 
 ```{r}
 summary(walmart$holiday_indicator)
 summary(walmart$weekday)
 ```
 
-Consider the above summaries of the holiday_indicator and weekday variables. It seems improbable (though not impossible) that almost exactly half of the transactions took place on a holiday while simultaneousl, roughly 1/7th of the transactions took place on a Monday, 1/7th on a Tuesday, and so on.
+Consider the above summaries of the holiday_indicator and weekday variables. It seems improbable (though not impossible) that almost exactly half of the transactions took place on a holiday while simultaneously, roughly 1/7th of the transactions took place on a Monday, 1/7th on a Tuesday, and so on.
 
 Secondly, the data points as recorded do not obey the intuitive reasoning and understanding of store categorizations in the real world. A prime example of this phenomena is the interaction between the 'product name'
 and 'category' variable:
@@ -695,7 +695,9 @@ Conclusion1 = table(walmart$product_name, walmart$category)
 Conclusion1
 ```
 
-As we can see, roughly half of the time a product with the name "Camera" is listed as an appliance, as are those named "TV" and "Laptop". This points to a possibly erroneously catalogued data set and we elected not to consider product name in our investigation for this reason. Finally, it is not plausible to assume that over a span of nine months (1/1/2024 - 9/16/2024) and five stores, only 5000 transactions took place for the largest retailer in the world, so it would be helpful to know what additional filtering variable the author used to assemble these 5000 observations (it is functionally impossible that they were randomly chosen given the proportions seen above for variables like day of the week).
+As we can see, roughly half of the time a product with the name "Camera" is listed as an appliance, as are those named "TV" and "Laptop". This may point to erroneously catalogued data and we elected not to consider product name in our investigation for this reason. 
+
+Finally, it is not plausible to assume that over a span of nine months (1/1/2024 - 9/16/2024) and five stores, only 5000 transactions took place for the largest retailer in the world, so it would be helpful to know what additional filtering variable the author used to assemble these 5000 observations (it is functionally impossible that they were randomly chosen given the proportions seen above for variables like day of the week).
 
 # References
 
